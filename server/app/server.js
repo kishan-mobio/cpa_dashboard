@@ -11,17 +11,12 @@ import mainRoutes from './routes/index.js';
 import logger from './config/logger.config.js';
 import { CONSTANTS } from './utils/constants.utils.js';
 import * as status from './utils/status_code.utils.js';
-import {
-  securityMiddleware,
-  securityAuditMiddleware,
-} from './middleware/security.middleware.js';
 import rateLimiter from './middleware/ratelimit.middleware.js';
 import './config/db.config.js';
 import {
   helmetConfig,
   corsConfig,
   sessionConfig,
-  securityHeaders,
 } from './config/security.config.js';
 
 const app = express();
@@ -37,23 +32,12 @@ const corsOptions = {
   credentials: true,
 };
 
-// Apply security middleware
-app.use(securityMiddleware);
 app.use(rateLimiter());
-app.use(securityAuditMiddleware);
 
 // Apply Global Middleware
 app.use(cors(corsOptions));
-app.use(helmet(helmetConfig));
 app.use(cors(corsConfig));
 
-// Apply security headers
-Object.entries(securityHeaders).forEach(([header, value]) => {
-  app.use((req, res, next) => {
-    res.setHeader(header, value);
-    next();
-  });
-});
 
 // Update session configuration
 const sessionOptions = {

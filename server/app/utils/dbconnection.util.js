@@ -1,5 +1,8 @@
 import { pool } from '../config/db.config.js';
 import logger from '../config/logger.config.js';
+import { CONSTANTS } from './constants.utils.js';
+import { LOG_MESSAGES } from './log_messages.utils.js';
+import { QUERY } from './query.constants.js';
 
 /**
  * Check if tables exist and create them if they don't
@@ -7,20 +10,20 @@ import logger from '../config/logger.config.js';
 export const checkAndCreateTables = async () => {
   try {
     // Check if roles table exists
-    const rolesTableExists = await checkTableExists('roles');
+    const rolesTableExists = await checkTableExists(CONSTANTS.ROLE.FIELD_NAME);
     if (!rolesTableExists) {
       await createRolesTable();
-      logger.info('Roles table created successfully');
+      logger.info(LOG_MESSAGES.DB.ROLES_TABLE_CREATED);
     }
 
     // Check if users table exists
-    const usersTableExists = await checkTableExists('users');
+    const usersTableExists = await checkTableExists(CONSTANTS.ROLE.USERS);
     if (!usersTableExists) {
       await createUsersTable();
-      logger.info('Users table created successfully');
+      logger.info(LOG_MESSAGES.DB.USERS_TABLE_CREATED);
     }
   } catch (error) {
-    logger.error('Error checking or creating tables:', error);
+    logger.error(CONSTANTS.DB.ERROR_CONNECTING, error);
   }
 };
 
@@ -30,13 +33,7 @@ export const checkAndCreateTables = async () => {
  * @returns {Promise<boolean>} - Whether the table exists
  */
 const checkTableExists = async (tableName) => {
-  const query = `
-    SELECT EXISTS (
-      SELECT FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name = $1
-    );
-  `;
+  const query = QUERY.TABLE_EXIST;
   
   const result = await pool.query(query, [tableName]);
   return result.rows[0].exists;
@@ -46,21 +43,7 @@ const checkTableExists = async (tableName) => {
  * Create the roles table
  */
 const createRolesTable = async () => {
-  const query = `
-    CREATE TABLE roles (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(50) NOT NULL UNIQUE,
-      description VARCHAR(255),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    
-    -- Insert default roles
-    INSERT INTO roles (name, description) 
-    VALUES 
-      ('admin', 'Administrator role with full access'),
-      ('employee', 'Regular employee role');
-  `;
+  const query = QUERY.CREATE_ROLES_TABLE;
   
   await pool.query(query);
 };
@@ -69,22 +52,7 @@ const createRolesTable = async () => {
  * Create the users table
  */
 const createUsersTable = async () => {
-  const query = `
-    CREATE TABLE users (
-      id SERIAL PRIMARY KEY,
-      email VARCHAR(100) NOT NULL UNIQUE,
-      phone_number VARCHAR(20) UNIQUE,
-      first_name VARCHAR(50) NOT NULL,
-      last_name VARCHAR(50) NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      address VARCHAR(255) DEFAULT '',
-      reset_password_token VARCHAR(255),
-      reset_password_expires TIMESTAMP,
-      role_id INTEGER NOT NULL REFERENCES roles(id),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `;
+  const query = QUERY.CREATE_USERS_TABLE;
   
   await pool.query(query);
 };
@@ -99,7 +67,7 @@ export const query = async (text, params) => {
   try {
     return await pool.query(text, params);
   } catch (error) {
-    logger.error('Database query error:', error);
+    logger.error(LOG_MESSAGES.DB.QUERY_ERROR, error);
     throw error;
   }
 };
@@ -107,6 +75,6 @@ export const query = async (text, params) => {
 // Close the pool when the application is shutting down
 process.on('SIGINT', async () => {
   await pool.end();
-  logger.info('Database connection pool closed');
+  logger.info(LOG_MESSAGES.DB.CONNECTION_POOL_CLOSED);
   process.exit(0);
 });

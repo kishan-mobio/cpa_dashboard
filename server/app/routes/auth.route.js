@@ -13,10 +13,10 @@ import { verifyAccessToken } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 // Register a new user
-router.post('/signup', validate(signUpSchema), authController.signUp);
+router.post('/signup', authController.signUp);
 
 // Login user
-router.post('/login', validate(loginSchema), authController.login);
+router.post('/login', authController.login);
 
 // Forgot password
 router.post(

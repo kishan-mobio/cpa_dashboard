@@ -15,7 +15,6 @@ router.post(
   '/users',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
-  validate(createUserSchema),
   userController.createUser
 );
 

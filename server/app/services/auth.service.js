@@ -9,6 +9,8 @@ import logger from '../config/logger.config.js';
 import { LOG_MESSAGES } from '../utils/log_messages.utils.js'; // Corrected path for LOG_MESSAGES
 import { CONSTANTS } from '../utils/constants.utils.js';
 import { performDbOperation, DB_OPERATIONS } from '../utils/db.utils.js';
+import { db } from '../utils/db1.utils.js';
+import { pool } from '../config/db.config.js';
 
 dotenv.config();
 
@@ -17,25 +19,42 @@ const handleError = (logMessage, error) => {
   throw new Error(error.message || CONSTANTS.USER.INTERNAL_SERVER_ERROR);
 };
 
-// User Management
-
 export const createUser = async (userData) => {
+  const { name, email, password, phone_number, role_id } = userData;
+
+  const query = `
+    INSERT INTO users (name, email, password, phone_number, role_id)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+
+  const values = [name, email, password, phone_number, role_id];
+
   try {
-    return await performDbOperation(User, DB_OPERATIONS.CREATE, userData);
+    const result = await pool.query(query, values);
+    const user = result.rows[0];
+    logger.info(`${LOG_MESSAGES.USER.CREATED_SUCCESSFULLY}: ${user.id}`);
+    return user;
   } catch (error) {
-    handleError(LOG_MESSAGES.USER.ERROR.CREATING, error);
+    logger.error(LOG_MESSAGES.USER.ERROR.CREATING, error);
+    throw new Error(error.message);
   }
 };
+
 
 export const checkUserExists = async (email, phoneNumber) => {
   try {
-    return await performDbOperation(User, DB_OPERATIONS.FIND_ONE, {
-      $or: [{ email }, { phoneNumber }],
-    });
+    const result = await db.query(
+      `SELECT * FROM users WHERE email = $1 OR phone_number = $2 LIMIT 1`,
+      [email, phoneNumber]
+    );
+    return result[0] || null;
   } catch (error) {
-    handleError(LOG_MESSAGES.USER.ERROR.FETCHING_BY_EMAIL, error);
+    logger.error(LOG_MESSAGES.USER.ERROR.FETCHING_BY_EMAIL, error);
+    throw new Error(error.message);
   }
 };
+
 
 export const updateUserPassword = async (userId, newPassword) => {
   try {
@@ -131,20 +150,26 @@ export const verifyResetPasswordToken = async (token) => {
 };
 
 
-// Roles
-
 export const checkRoleExistsById = async (roleId) => {
   try {
-    return await performDbOperation(Role, DB_OPERATIONS.FIND_BY_ID, roleId);
+    return await db.getById('roles', roleId);
   } catch (error) {
-    handleError(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_ID, error);
+    logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_ID, error);
+    throw new Error(error.message);
   }
 };
+
 
 export const findRoleByName = async (roleName) => {
   try {
-    return await performDbOperation(Role, DB_OPERATIONS.FIND_ONE, { roleName });
+    const result = await db.query(
+      `SELECT * FROM roles WHERE name = $1 LIMIT 1`,
+      [roleName]
+    );
+    return result[0] || null;
   } catch (error) {
-    handleError(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_NAME, error);
+    logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_NAME, error);
+    throw new Error(error.message);
   }
 };
+

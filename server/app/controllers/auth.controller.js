@@ -35,14 +35,14 @@ export const signUp = async (req, res) => {
 
     userData.roleId = role;
 
-    const roleDoc = await authService.checkRoleExistsById(role);
+    // const roleDoc = await authService.checkRoleExistsById(role);
 
-    if (!roleDoc) {
-      logger.warn(LOG_MESSAGES.ROLE.INVALID_ROLE);
-      return res
-        .status(status.STATUS_CODE_BAD_REQUEST)
-        .json(errorResponse(CONSTANTS.ROLE.INVALID_PROVIDED));
-    }
+    // if (!roleDoc) {
+    //   logger.warn(LOG_MESSAGES.ROLE.INVALID_ROLE);
+    //   return res
+    //     .status(status.STATUS_CODE_BAD_REQUEST)
+    //     .json(errorResponse(CONSTANTS.ROLE.INVALID_PROVIDED));
+    // }
 
     if (await getUserIfExists(userData.email, userData.phoneNumber)) {
       logger.warn(LOG_MESSAGES.USER.EXISTS_EMAIL);
@@ -54,7 +54,7 @@ export const signUp = async (req, res) => {
     userData.password = await bcrypt.hash(userData.password, 8);
     const newUser = await authService.createUser(userData);
 
-    await emailService.sendWelcomeEmail(userData.email, userData.firstName);
+    // Email sending temporarily disabled
 
     res
       .status(status.STATUS_CODE_SUCCESS)
@@ -81,32 +81,13 @@ export const login = async (req, res) => {
   if (checkValidation(req, res)) return;
 
   const { email, password } = req.body;
-  const ipAddress = req.ip;
-  const userAgent = req.get('User-Agent') || 'unknown';
 
   try {
     logger.info(LOG_MESSAGES.AUTH.LOGGING_IN);
 
     const user = await authService.checkUserExists(email);
-    if (!user) {
-      await authService.logLoginActivity({
-        userId: null,
-        ipAddress,
-        userAgent,
-        successful: false,
-      });
-      return res
-        .status(status.STATUS_CODE_BAD_REQUEST)
-        .json(errorResponse(CONSTANTS.USER.DOES_NOT_EXIST));
-    }
 
     if (!(await authService.validatePassword(password, user.password))) {
-      await authService.logLoginActivity({
-        userId: user._id,
-        ipAddress,
-        userAgent,
-        successful: false,
-      });
       return res
         .status(status.STATUS_CODE_BAD_REQUEST)
         .json(errorResponse(CONSTANTS.AUTH.PASSWORD_INCORRECT));
@@ -116,25 +97,12 @@ export const login = async (req, res) => {
     setSecureCookie(res, TOKEN_TYPES.ACCESS.KEY, accessToken);
     setSecureCookie(res, TOKEN_TYPES.REFRESH.KEY, refreshToken);
 
-    await authService.logLoginActivity({
-      userId: user._id,
-      ipAddress,
-      userAgent,
-      successful: true,
-    });
-
     return res
       .status(status.STATUS_CODE_SUCCESS)
       .json(successResponse(CONSTANTS.AUTH.LOGIN_SUCCESSFULLY, { user }));
   } catch (error) {
     logger.error(LOG_MESSAGES.AUTH.ERROR_LOG_IN, error);
 
-    await authService.logLoginActivity({
-      userId: null,
-      ipAddress,
-      userAgent,
-      successful: false,
-    });
     res
       .status(status.STATUS_CODE_INTERNAL_SERVER_STATUS)
       .json(errorResponse(CONSTANTS.USER.INTERNAL_SERVER_ERROR));

@@ -81,6 +81,9 @@ export const CONSTANTS = {
   },
 
   ROLE: {
+    FIELD_NAME: 'roles',
+    USER: 'user',
+    USERS: 'users',
     ADMIN: 'admin',
     EMPLOYEE: 'employee',
     INVALID_PROVIDED: 'Invalid role provided',

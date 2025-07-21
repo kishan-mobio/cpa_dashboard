@@ -44,6 +44,13 @@ export const LOG_MESSAGES = {
     GET_PAYLOAD_ERROR: 'Failed to get token payload:',
   },
 
+  DB: {
+    ROLES_TABLE_CREATED: 'Roles table created successfully',
+    USERS_TABLE_CREATED: 'Users table created successfully',
+    QUERY_ERROR: 'Database query error:',
+    CONNECTION_POOL_CLOSED: 'Database connection pool closed',
+  },
+
   AUTH: {
     SIGNING_UP: 'Signing up a new user',
     LOGGING_IN: 'Logging user',
