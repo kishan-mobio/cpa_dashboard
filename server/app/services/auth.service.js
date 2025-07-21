@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 import User from '../models/user.model.js';
 import Role from '../models/roles.model.js';
-import LoginActivity from '../models/loginActivity.model.js';
 
 import logger from '../config/logger.config.js';
 import { LOG_MESSAGES } from '../utils/log_messages.utils.js'; // Corrected path for LOG_MESSAGES
@@ -131,19 +130,6 @@ export const verifyResetPasswordToken = async (token) => {
   }
 };
 
-// Login Activity
-
-export const logLoginActivity = async (logData) => {
-  try {
-    return await performDbOperation(
-      LoginActivity,
-      DB_OPERATIONS.CREATE,
-      logData
-    );
-  } catch (error) {
-    handleError(LOG_MESSAGES.USER.ERROR_LOGGING_ACTIVITY, error);
-  }
-};
 
 // Roles
 

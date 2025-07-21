@@ -260,6 +260,8 @@ export const CONSTANTS = {
 
   DB: {
     ERROR_LOADING_CONFIG: 'Error loading database configuration:',
+    CONNECTED: 'Connected to database',
+    ERROR_CONNECTING: 'Error connecting to database:',
   },
 
   DB_OPERATIONS_MESSAGES: {

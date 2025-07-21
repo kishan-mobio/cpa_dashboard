@@ -1,13 +1,12 @@
-// server.js
+import pg from 'pg';
 
-import 'dotenv/config';
-import { CONSTANTS } from '../utils/constants.utils.js';
+const { Pool } = pg;
 
-// Dynamically import the db configuration based on the DB_TYPE environment variable
-import(`./${process.env.DB_TYPE}.config.js`)
-  .then((db) => {
-    db.connectDB();
-  })
-  .catch((error) => {
-    console.error(CONSTANTS.DB.ERROR_LOADING_CONFIG, error);
-  });
+// Create a connection pool
+export const pool = new Pool({
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT || 5432,
+});
