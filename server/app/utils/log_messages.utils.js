@@ -1,0 +1,328 @@
+export const LOG_MESSAGES = {
+  USER: {
+    CREATING: 'Creating a new user',
+    EXISTS_EMAIL: 'Attempt to create user with existing email',
+    EXISTS_PHONE: 'Attempt to create user with existing phone number',
+    FETCHING_ALL: 'Fetching all users',
+    FETCHING_BY_ID: 'Fetching user by ID',
+    FETCHING_BY_EMAIL: 'Fetching user by email',
+    FETCHING_BY_PHONE: 'Fetching user by phone number',
+    FETCHED_EMAIL: 'Successfully fetched user with email',
+    FETCHED_PHONE: 'Successfully fetched user with phone number',
+    NOT_FOUND: 'User not found',
+    NOT_FOUND_EMAIL: 'User with email not found',
+    NOT_FOUND_PHONE: 'User with phone number not found',
+    UPDATING: 'Updating user',
+    DELETING: 'Deleting user',
+    DELETED: 'User deleted successfully',
+    ALREADY_EXISTS: 'User already exists',
+    ERROR: {
+      CREATING: 'Error creating user',
+      FETCHING_ALL: 'Error fetching users',
+      FETCHING_BY_ID: 'Error fetching user by ID',
+      FETCHING_BY_EMAIL: 'Error fetching user by email',
+      FETCHING_BY_PHONE: 'Error fetching user by phone number',
+      UPDATING: 'Error updating user',
+      DELETING: 'Error deleting user',
+    },
+  },
+
+  TOKEN: {
+    CREATED: (userId) => `Token created for user ID: ${userId}`,
+    VERIFIED: (userId) => `Token verified successfully for user ID: ${userId}`,
+    VERIFICATION_FAILED: (msg) => `Token verification failed: ${msg}`,
+    MISSING_AUTH_HEADER: 'Authorization header is missing',
+    MISSING: 'Token is missing from authorization header',
+    ERROR_CREATING: 'Error creating token',
+    ERROR_VERIFICATION: 'Error verifying token:',
+    EXPIRATION_CHECK: 'Error checking token expiration:',
+    EXPIRED: 'Token has expired',
+    INVALID: 'Invalid token',
+    REFRESH_ERROR: 'Error refreshing tokens:',
+    EXPIRY_CHECK_ERROR: 'Failed to check if token is expired:',
+    GET_EXPIRY_ERROR: 'Failed to get token expiry:',
+    GET_PAYLOAD_ERROR: 'Failed to get token payload:',
+  },
+
+  AUTH: {
+    SIGNING_UP: 'Signing up a new user',
+    LOGGING_IN: 'Logging user',
+    INVALID_CREDENTIALS: 'Invalid Credentials',
+    PASSWORD_INCORRECT: 'Password is incorrect.',
+    USER_DOES_NOT_EXIST: 'User does not exist.',
+    PASSWORD_HASHED: 'Password hashed successfully',
+    PASSWORD_COMPARISON_SUCCESS: 'Password comparison successful',
+    ERROR_SIGN_UP: 'Error signing up user',
+    ERROR_LOG_IN: 'Error in logging user',
+    ERROR_VALIDATING_PASSWORD: 'Error validating password.',
+    ERROR_FETCHING_BY_EMAIL_OR_PHONE: 'Error fetching user by email or phone',
+    ERROR_LOGGING_ACTIVITY: 'Error in logging activity',
+    ERROR_PASSWORD_HASHING: 'Error hashing password',
+    ERROR_PASSWORD_COMPARISON: 'Error comparing passwords',
+  },
+
+  PASSWORD_RESET: {
+    TOKEN_EXPIRY: '1h',
+    EMAIL_SENT: 'Password reset instructions sent to your email.',
+    EMAIL_SENT_SUCCESS: 'Email sent successfully',
+    EMAIL_SEND_FAILED: 'Email sending failed',
+    RESET_SUCCESS: 'Password reset successfully',
+    CONFIRM_MISMATCH: 'New password and confirm password do not match.',
+    INVALID_TOKEN: 'Invalid reset token',
+    TOKEN_EXPIRED: 'Reset password token has expired',
+    TOKEN_CREATED: (userId) =>
+      `Reset password token created for user: ${userId}`,
+    TOKEN_VERIFIED: (userId) =>
+      `Reset password token verified for user: ${userId}`,
+    ERROR_EMAIL_SENT: 'Error in password forgot email sent',
+    ERROR_RESET_FAILED: 'Error in password reset failed',
+    ERROR_GENERATING_TOKEN: 'Error generating reset password token',
+    ERROR_UPDATING_PASSWORD: 'Error updating user password',
+    ERROR_VERIFYING_TOKEN: 'Error in verifying the reset token',
+  },
+
+  PROFILE: {
+    FETCHING_BY_ID: 'Fetching profile by ID',
+    UPDATING: 'Updating profile',
+    ERROR_FETCHING: 'Error fetching profile by ID',
+    ERROR_UPDATING: 'Error updating profile.',
+  },
+
+  ROLE: {
+    CREATING: 'Creating a new role',
+    FETCHING_BY_ID: 'Fetching role by ID',
+    ACCESS_DENIED: 'Access denied. User does not have sufficient permissions.',
+    INVALID_ROLE:
+      'Invalid role provided. Role must be either "admin" or "employee".',
+    ERROR_CREATING: 'Error creating role',
+    ERROR_FETCHING_BY_ID: 'Error fetching role by ID',
+    ERROR_CHECKING: 'Error checking user role:',
+    ERROR_FETCHING_BY_NAME: 'Error fetching role by name',
+  },
+
+  PDF: {
+    GENERATION_STARTED: 'Generating PDF',
+    GENERATION_FAILED: 'Error generating PDF',
+    MISSING_REQUIRED_FIELDS: 'Missing required fields',
+    GENERATION_SUCCESS: 'PDF generated successfully',
+  },
+
+  SSO: {
+    CONFIG: {
+      AUTH0_INCOMPLETE: 'Auth0 configuration is incomplete',
+      AZURE_INCOMPLETE: 'Azure AD configuration is incomplete',
+      NO_PROVIDER: 'No SSO provider configured',
+      NO_STRATEGY: 'No SSO strategy could be configured',
+    },
+    STRATEGY: {
+      AUTH0_CONFIGURED: 'Auth0 SSO strategy configured successfully',
+      AZURE_CONFIGURED: 'Azure AD SSO strategy configured successfully',
+    },
+    AUTH: {
+      ERROR_AUTH0: 'Error in Auth0 authentication:',
+      ERROR_AZURE: 'Error in Azure AD authentication:',
+    },
+    CALLBACK: {
+      ERROR: 'Error in SSO callback:',
+      LOGIN: 'Error in SSO login:',
+      LOGOUT: 'Error in SSO logout:',
+      USER_INFO: 'Error getting user info:',
+      TOKEN_REFRESH: 'Error refreshing tokens:',
+    },
+  },
+
+  FILE: {
+    SAVING: 'Saving file metadata',
+    UPLOADED_SUCCESSFULLY: 'File uploaded successfully',
+    NO_FILE_UPLOADED: 'No file uploaded',
+    FILE_INFO_RETRIEVED: 'File info retrieved successfully',
+    FILE_DELETED: 'File deleted successfully',
+    FILES_LISTED_SUCCESSFULLY: 'Files listed successfully',
+    FILE_DOWNLOADED_SUCCESSFULLY: 'File downloaded successfully',
+    ERROR_SAVING: 'Error saving file metadata:',
+    ERROR_FETCHING: 'Error fetching file',
+    ERROR_UPLOADING: 'Error uploading file',
+    ERROR_DELETING: 'Error deleting file',
+    ERROR_FETCHING_FILE_INFO: 'Error fetching file info',
+    ERROR_LISTING_FILES: 'Error listing files',
+    ERROR_DOWNLOADING_FILE: 'Error downloading file',
+    OPERATION_FAILED: 'File operation failed:',
+  },
+
+  AZURE: {
+    PROCESSING_CALLBACK: 'Processing Azure callback',
+    GENERATING_LOGIN_URL: 'Generating Azure login URL',
+    GENERATING_LOGOUT_URL: 'Generating Azure logout URL',
+    GETTING_TOKEN: 'Retrieving Azure access token',
+    ERROR: {
+      GETTING_TOKEN: 'Error getting Azure token',
+      LOGIN: 'Error during Azure login',
+      CALLBACK: 'Error during Azure callback',
+      LOGOUT: 'Error during Azure logout',
+      GETTING_USER_INFO: 'Error getting Azure user info',
+      UPDATING_CONFIG: 'Error updating Azure configuration',
+      GENERATING_LOGIN_URL: 'Error generating Azure login URL',
+      HANDLING_CALLBACK: 'Error handling Azure callback',
+      GENERATING_LOGOUT_URL: 'Error generating Azure logout URL',
+    },
+  },
+
+  CLOUDINARY: {
+    UPLOAD_ERROR: 'Cloudinary upload error:',
+    DELETE_ERROR: 'Cloudinary delete error:',
+    CONNECTION_ERROR: 'Cloudinary connection error:',
+  },
+
+  GENERAL: {
+    AUTHENTICATION_ERROR: 'Authentication error:',
+    UNAUTHORIZED_ACCESS: 'Unauthorized access attempt',
+    AUTHORIZATION_ERROR: 'Authorization error:',
+    INVALID_PASSPORT_STRATEGY: 'Invalid Passport strategy provided',
+  },
+
+  CONNECTION: {
+    MSSQL_SUCCESS: 'Connection has been established with MSSQL',
+    MSSQL_ERROR: 'Error connecting to SQL Server:',
+    MONGO_SUCCESS: 'Connection has been established with MongoDB',
+    MONGO_ERROR: 'Error connecting to MongoDB:',
+    AWS: 'Failed to connect to AWS S3:',
+    CLOUDINARY: 'Failed to connect to Cloudinary:',
+  },
+
+  ERROR_MESSAGES: {
+    SSO_CALLBACK: 'Error in SSO callback:',
+    SSO_LOGIN: 'Error in SSO login:',
+    SSO_LOGOUT: 'Error in SSO logout:',
+    USER_INFO: 'Error getting user info:',
+    TOKEN_REFRESH: 'Error refreshing tokens:',
+  },
+
+  ERROR_CREATING_SSO_USER: 'Error creating SSO user',
+  STORAGE: {
+    FILE_PATH: 'file.path: ',
+    CLOUDINARY_UPLOAD_ERROR: 'Error at cloudinary upload:',
+    CLOUDINARY_DELETE_ERROR: 'Cloudinary delete error:',
+    CLOUDINARY_LIST_ERROR: 'Cloudinary list error:',
+    AZURE_DELETE_ERROR: 'Azure delete error:',
+    AZURE_LIST_ERROR: 'Azure list error:',
+    AWS_UPLOAD_ERROR: 'AWS upload error:',
+    AWS_DELETE_ERROR: 'AWS delete error:',
+    AWS_LIST_ERROR: 'AWS list error:',
+    INITIALIZATION_ERROR: 'Failed to initialize storage service',
+    INVALID_FILE: 'Invalid or corrupt file provided',
+    AWS_CONFIG_MISSING: 'Required AWS configuration parameters missing',
+    AWS_OPERATION_ERROR: 'AWS operation failed',
+    AZURE_CONFIG_MISSING: 'Required Azure storage configuration missing',
+    AZURE_OPERATION_ERROR: 'Azure storage operation failed',
+  },
+  SECURITY: {
+    TOKEN: {
+      VALIDATION_ERROR: 'Token validation error:',
+      REFRESH_SUCCESS: 'Token refreshed successfully',
+      REFRESH_ERROR: 'Error refreshing token:',
+      EXPIRED: 'Token expired, attempting refresh',
+    },
+    PASSWORD: {
+      HASH_SUCCESS: 'Password hashed successfully',
+      HASH_ERROR: 'Error hashing password:',
+      COMPARE_SUCCESS: 'Password comparison successful',
+      COMPARE_ERROR: 'Error comparing passwords:',
+      VALIDATION_ERROR: 'Password validation failed:',
+    },
+    AUDIT: {
+      Event: 'Security Audit Event',
+      REQUEST_START: 'Security audit: Request started',
+      REQUEST_END: 'Security audit: Request completed',
+      SUSPICIOUS_ACTIVITY: 'Suspicious activity detected:',
+      VALIDATION_ERROR: 'Input validation error:',
+    },
+  },
+  QUEUE: {
+    STATUS_ERROR: 'Failed to get queue status:',
+    JOB_STATUS_ERROR: 'Failed to get job status:',
+    MONITOR_INITIALIZED: 'Queue monitor endpoints initialized',
+  },
+  SERVER: {
+    STARTED: (port, env) => `Server is running on port ${port} in ${env} mode`,
+    START_FAILED: 'Failed to start server:',
+    INITIALIZING: 'Initializing server...',
+    SHUTDOWN: 'Server is shutting down...',
+    CLEANUP: 'Performing cleanup operations...',
+    ENV_VARS: {
+      MISSING: 'Missing required environment variables:',
+      VALIDATING: 'Validating environment variables...',
+      VALIDATED: 'Environment variables validated successfully',
+    },
+    QUEUE: {
+      INITIALIZING: 'Initializing queue service...',
+      QUEUE_SERVICE: {
+        INITIALIZED: 'Queue service initialized',
+        INIT_FAILED: 'Failed to initialize queue service:',
+        CONNECTION: {
+          ERROR: 'RabbitMQ connection error:',
+          CLOSED: 'RabbitMQ connection closed',
+          RECONNECTING: 'Reconnecting to RabbitMQ...',
+          RECONNECT_FAILED: 'Failed to reconnect to RabbitMQ:',
+        },
+        CHANNEL: {
+          ERROR: 'RabbitMQ channel error:',
+          CLOSED: 'RabbitMQ channel closed',
+        },
+        JOB: {
+          PROCESSING: (id, queueName) =>
+            `Processing job ${id} from queue ${queueName}`,
+          COMPLETED: (id) => `Job ${id} completed successfully`,
+          ADD_FAILED: (queueName) => `Failed to add job to queue ${queueName}:`,
+          PROCESS_ERROR: (id) => `Error processing job ${id}:`,
+          RETRY: (id, attempts) => `Retrying job ${id}, attempt ${attempts}`,
+          MAX_ATTEMPTS: (id) =>
+            `Max attempts reached for job ${id}, moving to dead letter queue`,
+        },
+        QUEUE: {
+          STARTED: (queueName) => `Started processing queue: ${queueName}`,
+          PROCESS_FAILED: (queueName) =>
+            `Failed to process queue ${queueName}:`,
+          SETUP: {
+            STARTED: 'Setting up queue channels...',
+            COMPLETED: 'Queue channels setup completed',
+            ERROR: 'Failed to setup queue channels:',
+          },
+        },
+        CLEANUP: {
+          STARTED: 'Starting queue cleanup...',
+          COMPLETED: 'Queue cleanup completed',
+          ERROR: 'Error closing queue connections:',
+        },
+        RECONNECT: {
+          SCHEDULED: 'Scheduled queue reconnection...',
+          ATTEMPTING: 'Attempting to reconnect to queue...',
+          SUCCESS: 'Successfully reconnected to queue',
+          FAILED: 'Failed to reconnect to queue:',
+        },
+      },
+      CLEANUP: {
+        ERROR: 'Error closing queue connections:',
+      },
+    },
+    FILE_PROCESSOR: {
+      INITIALIZING: 'Initializing file processor...',
+      INITIALIZED: 'File processor initialized successfully',
+      INIT_FAILED: 'Failed to initialize file processor',
+      UPLOAD: {
+        PROCESSING: 'Processing file upload',
+        COMPLETED: 'File upload completed',
+        FAILED: 'File upload failed',
+      },
+      DOWNLOAD: {
+        PROCESSING: 'Processing file download',
+        COMPLETED: 'File download completed',
+        FAILED: 'File download failed',
+      },
+      CLEANUP: {
+        STARTED: 'Starting file processor cleanup',
+        COMPLETED: 'File processor cleanup completed',
+        FAILED: 'File processor cleanup failed',
+      },
+    },
+  },
+};
