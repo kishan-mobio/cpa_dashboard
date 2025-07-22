@@ -1,9 +1,6 @@
 import express from 'express';
 import { validate } from '../middleware/validate.middleware.js';
-import {
-  createUserSchema,
-  updateUserSchema,
-} from '../validators/user.validator.js';
+import { updateUserSchema } from '../validators/user.validator.js';
 import * as userController from '../controllers/user.controller.js';
 import { checkRole, verifyAccessToken } from '../middleware/auth.middleware.js';
 import { CONSTANTS } from '../utils/constants.utils.js';
@@ -12,7 +9,7 @@ const router = express.Router();
 
 // Create a new user
 router.post(
-  '/users',
+  '/create',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
   userController.createUser
@@ -20,7 +17,7 @@ router.post(
 
 // Get all users
 router.get(
-  '/users',
+  '/all',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
   userController.getAllUsers
@@ -28,7 +25,7 @@ router.get(
 
 // Get user by ID
 router.get(
-  '/users/:id',
+  '/:id',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
   userController.getUserById
@@ -36,7 +33,7 @@ router.get(
 
 // Update user by ID
 router.put(
-  '/users/:id',
+  '/:id',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
   validate(updateUserSchema),
@@ -45,7 +42,7 @@ router.put(
 
 // Delete user by ID
 router.delete(
-  '/users/:id',
+  '/:id',
   verifyAccessToken,
   checkRole([CONSTANTS.ROLE.ADMIN]),
   userController.deleteUser

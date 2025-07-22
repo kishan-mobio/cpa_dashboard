@@ -1,12 +1,4 @@
 import express from 'express';
-import { validate } from '../middleware/validate.middleware.js';
-import {
-  signUpSchema,
-  loginSchema,
-  resetPasswordSchema,
-  forgotPasswordSchema,
-} from '../validators/auth.validator.js';
-import { updateUserSchema } from '../validators/user.validator.js';
 import * as authController from '../controllers/auth.controller.js';
 import { verifyAccessToken } from '../middleware/auth.middleware.js';
 
@@ -19,29 +11,16 @@ router.post('/signup', authController.signUp);
 router.post('/login', authController.login);
 
 // Forgot password
-router.post(
-  '/forgot-password',
-  validate(forgotPasswordSchema),
-  authController.forgotPassword
-);
+router.post('/forgot-password', authController.forgotPassword);
 
 // Reset password
-router.post(
-  '/reset-password',
-  validate(resetPasswordSchema),
-  authController.resetPassword
-);
+router.post('/reset-password', authController.resetPassword);
 
 // Get User Profile
 router.get('/me', verifyAccessToken, authController.getProfile);
 
 // Update User Profile
-router.put(
-  '/profile/:id',
-  verifyAccessToken,
-  validate(updateUserSchema),
-  authController.updateProfile
-);
+router.put('/profile/:id', verifyAccessToken, authController.updateProfile);
 
 // Add logout route
 router.post('/logout', verifyAccessToken, authController.logout);

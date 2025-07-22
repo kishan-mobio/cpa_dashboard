@@ -25,12 +25,24 @@ export const LOG_MESSAGES = {
       UPDATING: 'Error updating user',
       DELETING: 'Error deleting user',
     },
+    PASSWORD_RESET: {
+      TOKEN_CREATED: (userId) =>
+        `Reset password token created for user ID: ${userId}`,
+      TOKEN_VERIFIED: (userId) =>
+        `Reset password token verified for user ID: ${userId}`,
+      ERROR_UPDATING_PASSWORD: 'Error updating user password',
+    },
   },
 
   TOKEN: {
     CREATED: (userId) => `Token created for user ID: ${userId}`,
     VERIFIED: (userId) => `Token verified successfully for user ID: ${userId}`,
     VERIFICATION_FAILED: (msg) => `Token verification failed: ${msg}`,
+    RESET_PASSWORD_TOKEN_CREATED: (userId) =>
+      `Reset password token created for user ID: ${userId}`,
+    RESET_PASSWORD_TOKEN_VERIFIED: (userId) =>
+      `Reset password token verified for user ID: ${userId}`,
+    ERROR_UPDATING_PASSWORD: 'Error updating user password',
     MISSING_AUTH_HEADER: 'Authorization header is missing',
     MISSING: 'Token is missing from authorization header',
     ERROR_CREATING: 'Error creating token',

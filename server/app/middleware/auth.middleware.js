@@ -35,11 +35,11 @@ const handleTokenError = (res, error) =>
  * @param {Object} userData - User data for token payload
  * @returns {Object} Access and refresh tokens
  */
-export const createTokens = ({ _id, email, roleId }) => {
+export const createTokens = ({ id, email, role_id }) => {
   try {
-    const payload = { id: _id, email, role: roleId };
+    const payload = { id, email, role: role_id };
 
-    logger.info(LOG_MESSAGES.TOKEN.CREATED(_id));
+    logger.info(LOG_MESSAGES.TOKEN.CREATED(id));
 
     return {
       accessToken: generateAccessToken(payload),
@@ -79,15 +79,13 @@ export const verifyAccessToken = (req, res, next) => {
 export const checkRole = (roleNames) => async (req, res, next) => {
   try {
     const roles = await authService.findRolesByNames(roleNames);
-
-    const validRoleIds = new Set(roles.map((role) => role._id.toString()));
-
+    const validRoleIds = new Set(roles.map((role) => role.id));
     if (!validRoleIds.has(req.user.role)) {
       logger.warn(LOG_MESSAGES.ACCESS_DENIED);
 
       return res
         .status(status.STATUS_CODE_INTERNAL_SERVER_STATUS)
-        .json(errorResponse(CONSTANTS.INTERNAL_SERVER_ERROR));
+        .json(errorResponse(CONSTANTS.USER.INTERNAL_SERVER_ERROR));
     }
 
     next();

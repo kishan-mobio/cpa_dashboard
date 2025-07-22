@@ -11,7 +11,7 @@ import { createTokens } from '../middleware/auth.middleware.js';
 import { verifyToken } from '../utils/jwt.utils.js';
 import { checkValidation, handleError } from '../utils/validation.utils.js';
 import { setSecureCookie, clearCookie } from '../utils/cookie.utils.js';
-import { TOKEN_TYPES } from '../utils/global.constants.js';
+import { TIME, TOKEN_TYPES } from '../utils/global.constants.js';
 
 // Check if user exists by email or phone
 const getUserIfExists = async (email, phone) =>
@@ -31,18 +31,18 @@ export const signUp = async (req, res) => {
   try {
     logger.info(LOG_MESSAGES.AUTH.SIGNING_UP);
 
-    const { role, ...userData } = req.body;
+    const { role_id: role, ...userData } = req.body;
 
-    userData.roleId = role;
+    userData.role_id = role;
 
-    // const roleDoc = await authService.checkRoleExistsById(role);
+    const roleDoc = await authService.checkRoleExistsById(role);
 
-    // if (!roleDoc) {
-    //   logger.warn(LOG_MESSAGES.ROLE.INVALID_ROLE);
-    //   return res
-    //     .status(status.STATUS_CODE_BAD_REQUEST)
-    //     .json(errorResponse(CONSTANTS.ROLE.INVALID_PROVIDED));
-    // }
+    if (!roleDoc) {
+      logger.warn(LOG_MESSAGES.ROLE.INVALID_ROLE);
+      return res
+        .status(status.STATUS_CODE_BAD_REQUEST)
+        .json(errorResponse(CONSTANTS.ROLE.INVALID_PROVIDED));
+    }
 
     if (await getUserIfExists(userData.email, userData.phoneNumber)) {
       logger.warn(LOG_MESSAGES.USER.EXISTS_EMAIL);
@@ -55,6 +55,7 @@ export const signUp = async (req, res) => {
     const newUser = await authService.createUser(userData);
 
     // Email sending temporarily disabled
+    await emailService.sendWelcomeEmail(userData.email, userData.name);
 
     res
       .status(status.STATUS_CODE_SUCCESS)
@@ -84,7 +85,6 @@ export const login = async (req, res) => {
 
   try {
     logger.info(LOG_MESSAGES.AUTH.LOGGING_IN);
-
     const user = await authService.checkUserExists(email);
 
     if (!(await authService.validatePassword(password, user.password))) {
@@ -93,13 +93,19 @@ export const login = async (req, res) => {
         .json(errorResponse(CONSTANTS.AUTH.PASSWORD_INCORRECT));
     }
 
+    await authService.addLastLogin(user.id);
+
     const { accessToken, refreshToken } = createTokens(user);
     setSecureCookie(res, TOKEN_TYPES.ACCESS.KEY, accessToken);
     setSecureCookie(res, TOKEN_TYPES.REFRESH.KEY, refreshToken);
 
-    return res
-      .status(status.STATUS_CODE_SUCCESS)
-      .json(successResponse(CONSTANTS.AUTH.LOGIN_SUCCESSFULLY, { user }));
+    return res.status(status.STATUS_CODE_SUCCESS).json(
+      successResponse(CONSTANTS.AUTH.LOGIN_SUCCESSFULLY, {
+        user,
+        accessToken,
+        refreshToken,
+      })
+    );
   } catch (error) {
     logger.error(LOG_MESSAGES.AUTH.ERROR_LOG_IN, error);
 
@@ -129,14 +135,12 @@ export const forgotPassword = async (req, res) => {
       return res
         .status(status.STATUS_CODE_BAD_REQUEST)
         .json(errorResponse(CONSTANTS.USER.DOES_NOT_EXIST));
-
-    const token = authService.generateResetPasswordToken(user._id);
+    const token = authService.generateResetPasswordToken(user.id);
 
     await authService.updateUserPasswordAndToken(
-      user._id,
-      null,
+      user.id,
       token,
-      Date.now() + 3600000
+      Date.now() + TIME.MS_MULTIPLIER
     );
 
     await emailService.sendForgotPasswordEmail(email, url, token);
@@ -184,7 +188,7 @@ export const resetPassword = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 8);
 
-    await authService.updateUserPassword(user._id, hashedPassword);
+    await authService.updateUserPassword(user.id, hashedPassword);
 
     res
       .status(status.STATUS_CODE_SUCCESS)

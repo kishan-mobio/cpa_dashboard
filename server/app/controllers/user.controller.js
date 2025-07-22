@@ -28,7 +28,7 @@ export const createUser = async (req, res) => {
 
     const { role, ...userData } = req.body;
 
-    userData.roleId = role;
+    userData.role_id = role;
 
     if (!(await authService.checkRoleExistsById(role))) {
       logger.warn(LOG_MESSAGES.ROLE.INVALID_ROLE);

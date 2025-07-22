@@ -9,7 +9,7 @@ const router = express.Router();
 const version1 = '/v1';
 
 // User Routes
-router.use(`${version1}/user`, userRoutes);
+router.use(`${version1}/users`, userRoutes);
 
 // Auth Routes
 router.use(`${version1}/auth`, authRoutes);

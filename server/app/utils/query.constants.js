@@ -41,4 +41,67 @@ export const QUERY = {
       INSERT INTO users (name, role_id, email, password, phone_number)
       VALUES ('admin', (SELECT id FROM roles WHERE name = 'admin'), 'admin@gmail.com', 'Admin@123', '1234567890');
       `,
+  UPDATE_USER_LAST_LOGIN: `
+    UPDATE users
+    SET last_login = NOW(),
+        updated_at = NOW()
+    WHERE id = $1
+    RETURNING *;
+  `,
+  GET_USER_BY_EMAIL: `SELECT * FROM users WHERE email = $1 LIMIT 1`,
+  GET_USER_BY_ANY: (key) => `SELECT * FROM users WHERE ${key} = $1 LIMIT 1`,
+  INSERT_USER: `
+      INSERT INTO users (name, email, password, phone_number, role_id)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `,
+  UPDATE_USER_PASSWORD: `
+    UPDATE users
+    SET password = $1,
+        reset_password_token = NULL,
+        reset_password_expires = NULL,
+        updated_at = NOW()
+    WHERE id = $2
+    RETURNING *;
+  `,
+  FIND_ROLES_BY_NAMES: `SELECT * FROM roles WHERE name = ANY($1)`,
+  UPDATE_USER_PASSWORD_AND_TOKEN: `
+    UPDATE users
+    SET password = $1,
+        reset_password_token = $2,
+        reset_password_expires = $3,
+        updated_at = NOW()
+    WHERE id = $4
+    RETURNING *;
+  `,
+  GET_USER_BY_RESET_PASSWORD_TOKEN: `
+    SELECT * FROM users 
+    WHERE reset_password_token = $1
+    LIMIT 1
+  `,
+  FIND_ROLE_BY_NAME: `SELECT * FROM roles WHERE name = $1 LIMIT 1`,
+  UPDATE_USER_PASSWORD: `
+    UPDATE users
+    SET password = $1,
+        reset_password_token = NULL,
+        reset_password_expires = NULL,
+        updated_at = NOW()
+    WHERE id = $2
+    RETURNING *;
+  `,
+  FIND_ROLES_BY_NAMES: `SELECT * FROM roles WHERE name = ANY($1)`,
+  UPDATE_USER_TOKEN: `
+    UPDATE users
+    SET reset_password_token = $1,
+        reset_password_expires = $2,
+        updated_at = NOW()
+    WHERE id = $3
+    RETURNING *;
+  `,
+  GET_USER_BY_RESET_PASSWORD_TOKEN: `
+    SELECT * FROM users 
+    WHERE reset_password_token = $1
+    LIMIT 1
+  `,
+  FIND_ROLE_BY_NAME: `SELECT * FROM roles WHERE name = $1 LIMIT 1`,
 };
