@@ -2,8 +2,6 @@ import 'dotenv/config';
 import { app } from './app/server.js';
 import { LOG_MESSAGES } from './app/utils/log_messages.utils.js';
 import { createLogger } from './app/utils/logger.utils.js';
-import { connectDB } from './app/config/postgresql.config.js';
-
 const logger = createLogger('server');
 
 // Required environment variables
@@ -57,7 +55,6 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
   try {
     validateEnvVars(requiredEnvVars);
-    await connectDB();
     // Start the server
     app.listen(PORT, () => {
       logger.info(LOG_MESSAGES.SERVER.STARTED(PORT, process.env.NODE_ENV));

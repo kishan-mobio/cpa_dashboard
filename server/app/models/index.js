@@ -1,15 +1,11 @@
-import sequelizeConfig from '../config/sequelizeconnection.config.js';
-import Role from './roles.model.js';
-import User from './user.model.js';
+import sequelize from '../config/sequelize.js';
+import RoleModel from './roles.model.js';
+import UserModel from './user.model.js';
 
-const initDB = async () => {
-  try {
-    await sequelizeConfig.authenticate();
-    await sequelizeConfig.sync(); // Ensure all models/tables are created
-    console.log('✅ DB connection and sync successful');
-  } catch (error) {
-    console.error('❌ Error connecting to DB:', error);
-  }
-};
+const User = UserModel(sequelize);
+const Role = RoleModel(sequelize);
 
-export { sequelizeConfig, Role, User, initDB };
+Role.hasMany(User, { foreignKey: 'role_id' });
+User.belongsTo(Role, { foreignKey: 'role_id' });
+
+export { sequelize, Role, User };

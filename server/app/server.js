@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import cors from 'cors';
-import helmet from 'helmet';
 import { configureAuth0 } from './config/auth0.config.js';
 import { initializeSSO } from './controllers/sso.controller.js';
 import morganMiddleware from './middleware/morgan.middleware.js';
@@ -12,12 +11,9 @@ import logger from './config/logger.config.js';
 import { CONSTANTS } from './utils/constants.utils.js';
 import * as status from './utils/status_code.utils.js';
 import rateLimiter from './middleware/ratelimit.middleware.js';
-import './config/db.config.js';
-import {
-  helmetConfig,
-  corsConfig,
-  sessionConfig,
-} from './config/security.config.js';
+import { corsConfig, sessionConfig } from './config/security.config.js';
+import { sequelize } from './models/index.js';
+import './models/index.js';
 
 const app = express();
 const { PORT, PRODUCTION_URL, NODE_ENV } = process.env;
@@ -32,12 +28,23 @@ const corsOptions = {
   credentials: true,
 };
 
+(async () => {
+  try {
+    await sequelize.authenticate();
+    logger.info(CONSTANTS.DB.CONNECTED);
+    await sequelize.sync();
+    logger.info(CONSTANTS.DB.TABLE_SYNC);
+  } catch (error) {
+    logger.error(CONSTANTS.DB.ERROR_CONNECTING, error);
+    process.exit(1);
+  }
+})();
+
 app.use(rateLimiter());
 
 // Apply Global Middleware
 app.use(cors(corsOptions));
 app.use(cors(corsConfig));
-
 
 // Update session configuration
 const sessionOptions = {

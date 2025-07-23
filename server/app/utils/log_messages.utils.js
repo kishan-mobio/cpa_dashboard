@@ -18,6 +18,7 @@ export const LOG_MESSAGES = {
     ALREADY_EXISTS: 'User already exists',
     ERROR: {
       CREATING: 'Error creating user',
+      ACCESS_DENIED: 'Access denied. User does not have permission.',
       FETCHING_ALL: 'Error fetching users',
       FETCHING_BY_ID: 'Error fetching user by ID',
       FETCHING_BY_EMAIL: 'Error fetching user by email',

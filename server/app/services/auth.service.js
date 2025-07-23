@@ -4,8 +4,7 @@ import jwt from 'jsonwebtoken';
 import logger from '../config/logger.config.js';
 import { LOG_MESSAGES } from '../utils/log_messages.utils.js'; // Corrected path for LOG_MESSAGES
 import { CONSTANTS } from '../utils/constants.utils.js';
-import User from '../models/user.model.js';
-import Role from '../models/roles.model.js';
+import { Role, User } from '../models/index.js';
 
 
 const handleError = (logMessage, error) => {

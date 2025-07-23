@@ -1,18 +1,13 @@
-import 'dotenv/config';
-import logger from './logger.config.js';
-import { CONSTANTS } from '../utils/constants.utils.js';
-import sequelizeConfig from './sequelizeconnection.config.js';
+import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
 
-/**
- * Connect to PostgreSQL database
- */
-export const connectDB = async () => {
-  try {
-    await sequelizeConfig.authenticate();
-    logger.info(CONSTANTS.DB.CONNECTED);
-    await sequelizeConfig.sync(); // Ensure all models/tables are created
-    logger.info(CONSTANTS.DB.TABLE_SYNC);
-  } catch (error) {
-    logger.error(CONSTANTS.DB.ERROR_CONNECTING, error);
-  }
-};
+dotenv.config();
+
+// Use PG_URI from environment variables, fallback to a default if not set
+const connectionString = process.env.PG_URI;
+const sequelize = new Sequelize(connectionString, {
+  dialect: 'postgres',
+  logging: false, // or true for SQL logs
+});
+
+export default sequelize;

@@ -14,6 +14,7 @@ export const CONSTANTS = {
       'User with the same email or phone number already exists.',
     USER_INFO_RETRIEVED_SUCCESSFULLY: 'User info retrieved successfully',
     INVALID_ROLE_ID: 'Invalid role ID',
+    
   },
 
   TOKEN: {

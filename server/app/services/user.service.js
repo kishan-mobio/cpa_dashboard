@@ -1,6 +1,6 @@
 import logger from '../config/logger.config.js';
+import { User } from '../models/index.js';
 import { LOG_MESSAGES } from '../utils/log_messages.utils.js';
-import User from '../models/user.model.js';
 
 /**
  * Get all users from the database

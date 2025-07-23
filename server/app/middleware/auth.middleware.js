@@ -56,6 +56,7 @@ export const createTokens = ({ id, email, role_id }) => {
  */
 export const verifyAccessToken = (req, res, next) => {
   const token = extractToken(req);
+  console.log('Token:', token);
 
   if (!token) {
     logger.warn(LOG_MESSAGES.TOKEN.MISSING);
@@ -80,8 +81,10 @@ export const checkRole = (roleNames) => async (req, res, next) => {
   try {
     const roles = await authService.findRolesByNames(roleNames);
     const validRoleIds = new Set(roles.map((role) => role.id));
+    console.log('Valid Role IDs:', validRoleIds);
+    console.log('Requested User Role:', req.user.role);
     if (!validRoleIds.has(req.user.role)) {
-      logger.warn(LOG_MESSAGES.ACCESS_DENIED);
+      logger.warn(LOG_MESSAGES.ROLE.ACCESS_DENIED);
 
       return res
         .status(status.STATUS_CODE_INTERNAL_SERVER_STATUS)
