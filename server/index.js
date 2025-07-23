@@ -57,7 +57,7 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
   try {
     validateEnvVars(requiredEnvVars);
-    connectDB()
+    await connectDB();
     // Start the server
     app.listen(PORT, () => {
       logger.info(LOG_MESSAGES.SERVER.STARTED(PORT, process.env.NODE_ENV));

@@ -1,15 +1,12 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
 import logger from '../config/logger.config.js';
 import { LOG_MESSAGES } from '../utils/log_messages.utils.js'; // Corrected path for LOG_MESSAGES
 import { CONSTANTS } from '../utils/constants.utils.js';
-import { db } from '../utils/db1.utils.js';
-import { pool } from '../config/db.config.js';
-import { QUERY } from '../utils/query.constants.js';
+import User from '../models/user.model.js';
+import Role from '../models/roles.model.js';
 
-dotenv.config();
 
 const handleError = (logMessage, error) => {
   logger.error(logMessage, error);
@@ -17,12 +14,8 @@ const handleError = (logMessage, error) => {
 };
 
 export const createUser = async (userData) => {
-  const { name, email, password, phone_number, role_id } = userData;
-  const values = [name, email, password, phone_number, role_id];
-
   try {
-    const result = await pool.query(QUERY.INSERT_USER, values);
-    const user = result.rows[0];
+    const user = await User.create(userData);
     logger.info(`${LOG_MESSAGES.USER.CREATED_SUCCESSFULLY}: ${user.id}`);
     return user;
   } catch (error) {
@@ -33,19 +26,18 @@ export const createUser = async (userData) => {
 
 export const checkUserExists = async (email) => {
   try {
-    const result = await db.query(QUERY.GET_USER_BY_EMAIL, [email]);
-    return result[0] || null;
+    return await User.findOne({ where: { email } });
   } catch (error) {
     logger.error(LOG_MESSAGES.USER.ERROR.FETCHING_BY_EMAIL, error);
     throw new Error(error.message);
   }
 };
 
+
 export const addLastLogin = async (userId) => {
   try {
-    const values = [userId];
-    const rows = await db.query(QUERY.UPDATE_USER_LAST_LOGIN, values);
-    return rows[0];
+    await User.update({ last_login: new Date() }, { where: { id: userId } });
+    return await User.findByPk(userId);
   } catch (error) {
     logger.error(LOG_MESSAGES.USER.ERROR.UPDATING_LAST_LOGIN, error);
     throw new Error(error.message);
@@ -54,22 +46,25 @@ export const addLastLogin = async (userId) => {
 
 export const updateUserPassword = async (userId, newPassword) => {
   try {
-    const values = [newPassword, userId];
-    const rows = await db.query(QUERY.UPDATE_USER_PASSWORD, values);
-    return rows[0];
-  } catch (error) {
-    logger.error(
-      LOG_MESSAGES.USER.PASSWORD_RESET.ERROR_UPDATING_PASSWORD,
-      error
+    await User.update(
+      {
+        password: newPassword,
+        reset_token: null,
+        reset_token_expires: null,
+      },
+      { where: { id: userId } }
     );
+    return await User.findByPk(userId);
+  } catch (error) {
+    logger.error(LOG_MESSAGES.USER.PASSWORD_RESET.ERROR_UPDATING_PASSWORD, error);
     throw new Error(error.message);
   }
 };
 
-export const findRolesByNames = async (roleName) => {
+
+export const findRolesByNames = async (roleNames) => {
   try {
-    const result = await db.query(QUERY.FIND_ROLES_BY_NAMES, [roleName]);
-    return result;
+    return await Role.findAll({ where: { name: roleNames } });
   } catch (error) {
     logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_NAME, error);
     throw new Error(error.message);
@@ -82,32 +77,26 @@ export const updateUserPasswordAndToken = async (
   resetPasswordExpires
 ) => {
   try {
-    const values = [
-      resetPasswordToken,
-      new Date(Number(resetPasswordExpires)),
-      userId,
-    ];
-    const rows = await db.query(QUERY.UPDATE_USER_TOKEN, values);
-    return rows[0];
+    await User.update(
+      {
+        reset_token: resetPasswordToken,
+        reset_token_expires: new Date(Number(resetPasswordExpires)),
+      },
+      { where: { id: userId } }
+    );
+    return await User.findByPk(userId);
   } catch (error) {
     logger.error(LOG_MESSAGES.TOKEN.ERROR_UPDATING_PASSWORD, error);
     throw new Error(error.message);
   }
 };
 
+
 export const getUserByResetPasswordToken = async (resetPasswordToken) => {
   try {
-    const values = [resetPasswordToken];
-    const result = await db.query(
-      QUERY.GET_USER_BY_RESET_PASSWORD_TOKEN,
-      values
-    );
-    return result[0] || null;
+    return await User.findOne({ where: { reset_token: resetPasswordToken } });
   } catch (error) {
-    handleError(
-      LOG_MESSAGES.USER.ERROR_FETCHING_BY_RESET_PASSWORD_TOKEN,
-      error
-    );
+    logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_BY_RESET_PASSWORD_TOKEN, error);
     throw new Error(error.message);
   }
 };
@@ -153,20 +142,19 @@ export const verifyResetPasswordToken = async (token) => {
 
 export const checkRoleExistsById = async (roleId) => {
   try {
-    return await db.getById(CONSTANTS.ROLE.FIELD_NAME, roleId);
+    return await Role.findByPk(roleId);
   } catch (error) {
     logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_ID, error);
     throw new Error(error.message);
   }
 };
 
-
 export const findRoleByName = async (roleName) => {
   try {
-    const result = await db.query(QUERY.FIND_ROLE_BY_NAME, [roleName]);
-    return result[0] || null;
+    return await Role.findOne({ where: { name: roleName } });
   } catch (error) {
     logger.error(LOG_MESSAGES.USER.ERROR_FETCHING_ROLE_BY_NAME, error);
     throw new Error(error.message);
   }
 };
+

@@ -1,30 +1,34 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelizeConfig from '../config/sequelizeconnection.config.js';
 
-const { Schema, model } = mongoose;
-
-const roleSchema = new Schema(
+const Role = sequelizeConfig.define(
+  'Role',
   {
-    roleName: {
-      type: String,
-      required: true,
-      unique: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     description: {
-      type: String,
-      default: '',
+      type: DataTypes.STRING(255),
     },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
-    updatedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   },
   {
-    timestamps: true,
+    tableName: 'roles',
+    timestamps: false,
   }
 );
 
-export default model('Role', roleSchema);
+export default Role;

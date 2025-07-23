@@ -1,50 +1,69 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import Role from './roles.model.js';
+import sequelizeConfig from '../config/sequelizeconnection.config.js';
 
-const { Schema, model } = mongoose;
-
-const userSchema = new Schema(
+const User = sequelizeConfig.define(
+  'User',
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    role_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'roles',
+        key: 'id',
+      },
+    },
     email: {
-      type: String,
+      type: DataTypes.STRING(100),
+      allowNull: false,
       unique: true,
-      required: true,
-    },
-    phoneNumber: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
     },
     password: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
-    address: {
-      type: String,
-      default: '',
+    phone_number: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: true,
     },
-    resetPasswordToken: {
-      type: String,
+    reset_token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
-    resetPasswordExpires: {
-      type: Date,
+    reset_token_expires: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
-    roleId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Role',
-      required: true,
+    last_login: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   },
   {
-    timestamps: true,
+    tableName: 'users',
+    timestamps: false,
   }
 );
 
-export default model('User', userSchema);
+User.belongsTo(Role, { foreignKey: 'role_id' });
+Role.hasMany(User, { foreignKey: 'role_id' });
+
+export default User;

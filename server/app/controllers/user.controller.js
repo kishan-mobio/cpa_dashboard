@@ -75,6 +75,7 @@ export const createUser = async (req, res) => {
  * @method GET
  */
 export const getAllUsers = async (req, res) => {
+  console.log('getAllUsers');
   try {
     if (validateRequest(req)) {
       return res
@@ -95,7 +96,7 @@ export const getAllUsers = async (req, res) => {
   } catch (error) {
     const { status: errorStatus, response } = handleError(
       error,
-      LOG_MESSAGES.USER.ERROR_FETCHING_ALL
+      LOG_MESSAGES.USER.ERROR.FETCHING_ALL
     );
 
     return res.status(errorStatus).json(response);
